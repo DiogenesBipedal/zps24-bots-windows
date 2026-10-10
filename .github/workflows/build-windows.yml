@@ -24,9 +24,16 @@ jobs:
         with:
           python-version: '3.12'
 
+      # Short build root: object file names include the path, and the link command for NavBot's
+      # hundreds of files hits Windows' command line limit from the default workspace.
+      - name: Build root
+        shell: bash
+        run: mkdir -p /c/w && echo "W=/c/w" >> $GITHUB_ENV
+
       - name: AMBuild (pinned)
         shell: bash
         run: |
+          cd /c/w
           git clone -q https://github.com/alliedmodders/ambuild ambuild
           git -C ambuild checkout -q 01212cb
           python -m pip install -q ./ambuild
@@ -34,6 +41,7 @@ jobs:
       - name: Fetch sources (pinned)
         shell: bash
         run: |
+          cd /c/w
           clone() { # dir url ref
             git clone -q --recursive "$2" "$1"
             git -C "$1" checkout -q "$3"
@@ -47,32 +55,32 @@ jobs:
       - name: Apply ZPS 2.4 patches
         shell: bash
         run: |
+          cd /c/w
           git -C metamod-source apply --whitespace=nowarn "$GITHUB_WORKSPACE/repo/core/patches/metamod-zps24.patch"
           git -C NavBot apply --whitespace=nowarn "$GITHUB_WORKSPACE/repo/core/patches/navbot-zps24.patch"
 
       - name: Build Metamod:Source (orangebox, x86)
         shell: bash
         run: |
-          cd metamod-source && mkdir build && cd build
-          python ../configure.py --sdks=orangebox --hl2sdk-root="$GITHUB_WORKSPACE" --targets=x86 --enable-optimize
+          cd /c/w/metamod-source && mkdir build && cd build
+          python ../configure.py --sdks=orangebox --hl2sdk-root="C:/w" --targets=x86 --enable-optimize
           ambuild
 
       - name: Build NavBot (orangebox, x86)
         shell: bash
         run: |
-          cd NavBot && mkdir build && cd build
-          python ../configure.py --sdks=orangebox --hl2sdk-root="$GITHUB_WORKSPACE" \
-            --sm-path="$GITHUB_WORKSPACE/sourcemod" --mms-path="$GITHUB_WORKSPACE/metamod-source" \
+          cd /c/w/NavBot && mkdir build && cd build
+          python ../configure.py --sdks=orangebox --hl2sdk-root="C:/w" \
+            --sm-path="C:/w/sourcemod" --mms-path="C:/w/metamod-source" \
             --targets=x86 --enable-optimize
           ambuild
 
       - name: Collect
         shell: bash
         run: |
-          mkdir -p out/addons/metamod/bin out/addons/sourcemod/extensions
-          find metamod-source/build/package -name "*.dll" -path "*metamod*" | head -20
-          cp -r metamod-source/build/package/addons/metamod/* out/addons/metamod/
-          cp -r NavBot/build/package/addons/sourcemod/* out/addons/sourcemod/
+          mkdir -p out/addons/metamod out/addons/sourcemod
+          cp -r /c/w/metamod-source/build/package/addons/metamod/* out/addons/metamod/
+          cp -r /c/w/NavBot/build/package/addons/sourcemod/* out/addons/sourcemod/
           find out -type f | head -100
 
       - name: Upload
