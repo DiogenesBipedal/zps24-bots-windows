@@ -1,0 +1,82 @@
+# Builds the patched Metamod:Source and NavBot for the Windows ZPS 2.4 dedicated server
+# (Source 2007 / "orangebox", 32-bit), with MSVC on a Windows runner. Same pinned versions and
+# patches as the Linux build in the core repo (core/scripts/build.sh).
+name: Build Windows binaries
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-2022
+    steps:
+      - name: Checkout (with the core repo)
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          path: repo
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: AMBuild (pinned)
+        shell: bash
+        run: |
+          git clone -q https://github.com/alliedmodders/ambuild ambuild
+          git -C ambuild checkout -q 01212cb
+          python -m pip install -q ./ambuild
+
+      - name: Fetch sources (pinned)
+        shell: bash
+        run: |
+          clone() { # dir url ref
+            git clone -q --recursive "$2" "$1"
+            git -C "$1" checkout -q "$3"
+            git -C "$1" submodule update -q --init --recursive
+          }
+          clone hl2sdk-orangebox https://github.com/alliedmodders/hl2sdk           88bc34ab
+          clone metamod-source   https://github.com/alliedmodders/metamod-source   75dd7b2
+          clone sourcemod        https://github.com/alliedmodders/sourcemod        03865e00c
+          clone NavBot           https://github.com/caxanga334/NavBot              0.1.2-pr2
+
+      - name: Apply ZPS 2.4 patches
+        shell: bash
+        run: |
+          git -C metamod-source apply --whitespace=nowarn "$GITHUB_WORKSPACE/repo/core/patches/metamod-zps24.patch"
+          git -C NavBot apply --whitespace=nowarn "$GITHUB_WORKSPACE/repo/core/patches/navbot-zps24.patch"
+
+      - name: Build Metamod:Source (orangebox, x86)
+        shell: bash
+        run: |
+          cd metamod-source && mkdir build && cd build
+          python ../configure.py --sdks=orangebox --hl2sdk-root="$GITHUB_WORKSPACE" --targets=x86 --enable-optimize
+          ambuild
+
+      - name: Build NavBot (orangebox, x86)
+        shell: bash
+        run: |
+          cd NavBot && mkdir build && cd build
+          python ../configure.py --sdks=orangebox --hl2sdk-root="$GITHUB_WORKSPACE" \
+            --sm-path="$GITHUB_WORKSPACE/sourcemod" --mms-path="$GITHUB_WORKSPACE/metamod-source" \
+            --targets=x86 --enable-optimize
+          ambuild
+
+      - name: Collect
+        shell: bash
+        run: |
+          mkdir -p out/addons/metamod/bin out/addons/sourcemod/extensions
+          find metamod-source/build/package -name "*.dll" -path "*metamod*" | head -20
+          cp -r metamod-source/build/package/addons/metamod/* out/addons/metamod/
+          cp -r NavBot/build/package/addons/sourcemod/* out/addons/sourcemod/
+          find out -type f | head -100
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: zps24-bots-windows-binaries
+          path: out/
