@@ -13,7 +13,7 @@ start)
 		+rcon_password "$PW" +map "${2:-zpo_cabin_outbreak_b8_com}" > /tmp/zps24-win.out 2>&1 &
 	echo "starting on $IP:$PORT" ;;
 stop)
-	pkill -f 'srcds.exe' ; sleep 2; wineserver -k 2>/dev/null; echo stopped ;;
+	pkill -f '[s]rcds\.exe' ; sleep 2; WINEPREFIX=$WINEPREFIX wineserver -k 2>/dev/null; echo stopped ;;   # [s]: don't match this shell's own command line
 cmd)
 	shift; ZPS24_RCON_HOST=$IP ZPS24_RCON_PORT=$PORT python3 "$(dirname "$0")/../core/scripts/rcon.py" "$*" ;;
 log)
