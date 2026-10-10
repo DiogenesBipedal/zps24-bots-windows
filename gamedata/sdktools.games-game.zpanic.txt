@@ -1,0 +1,116 @@
+"Games"
+{
+	"zps"
+	{
+		"Offsets"
+		{
+			"GiveNamedItem"
+			{
+				"linux"		"359"
+				"windows"	"358"
+			}
+			"RemovePlayerItem"
+			{
+				"linux"		"248"
+				"windows"	"247"
+			}
+			"Weapon_GetSlot"
+			{
+				"linux"		"243"
+				"windows"	"242"
+			}
+			"Ignite"
+			{
+				"linux"		"200"
+				"windows"	"199"
+			}
+			"Extinguish"
+			{
+				"linux"		"204"
+				"windows"	"203"
+			}
+			"Teleport"
+			{
+				"linux"		"105"
+				"windows"	"104"
+			}
+			"CommitSuicide"
+			{
+				"linux"		"405"
+				"windows"	"405"
+			}
+			"GetVelocity"
+			{
+				"linux"		"134"
+				"windows"	"133"
+			}
+			"EyeAngles"
+			{
+				"linux"		"126"
+				"windows"	"125"
+			}
+			"AcceptInput"
+			{
+				"linux"		"36"
+				"windows"	"35"
+			}
+			"SetEntityModel"
+			{
+				"linux"		"25"
+				"windows"	"24"
+			}
+			"WeaponEquip"
+			{
+				"linux"		"236"
+				"windows"	"235"
+			}
+			"Activate"
+			{
+				"linux"		"33"
+				"windows"	"32"
+			}
+			"PlayerRunCmd"
+			{
+				"linux"		"378"
+				"windows"	"377"
+			}
+			"GetAttachment"
+			{
+				"linux"		"197"
+				"windows"	"196"
+			}
+			"SetOwnerEntity"
+			{
+				"linux"		"17"
+				"windows"	"16"
+			}
+			"GiveAmmo"
+			{
+				"linux"		"230"
+				"windows"	"229"
+			}
+		}
+		"Signatures"
+		{
+			"FireOutput"
+			{
+				"library"		"server"
+				"linux"		"@_ZN17CBaseEntityOutput10FireOutputE9variant_tP11CBaseEntityS2_f"
+				/* Windows: unique in 2.4's server.dll; uses the "(%0.2f) output: (%s,%s) -> ..." strings */
+				"windows"	"\x55\x8B\xEC\x81\xEC\x1C\x01\x00\x00\x53\x56\x8B\x71\x14"
+			}
+			"LookupAttachment"
+			{
+				"library"		"server"
+				"linux"		"@_ZN14CBaseAnimating16LookupAttachmentEPKc"
+				/* Windows: the function called right after pushing attachment names ("eyes", "anim_attachment_RH"...); returns Studio_FindAttachment() + 1 */
+				"windows"	"\x55\x8B\xEC\x56\x8B\xF1\x83\xBE\x1C\x05\x00\x00\x00\x75\x2A\xE8\x2A\x2A\x2A\x2A\x85\xC0\x74\x2A\x8B\xCE\xE8\x2A\x2A\x2A\x2A\x8B\x86\x1C\x05\x00\x00\x5E\x85\xC0\x74\x2A\x83\x38\x00\x75\x2A\x33\xC0\x5D\xC2\x04\x00\x8B\x4D\x08"
+			}
+		}
+		"Keys"
+		{
+			"GameRulesProxy"		"CGameMode_Manager"
+			"GameRulesDataTable"		"zps_gamerules_data"
+		}
+	}
+}

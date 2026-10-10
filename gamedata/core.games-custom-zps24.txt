@@ -1,0 +1,38 @@
+/* ZPS 2.4 (Source 2007 / orangebox): CGlobalEntityList lookup.
+ * Linux: server_i486.so exports gEntList.
+ * Windows: server.dll has no symbols. As for SourceMod's other Source 2007 mods (engine.ep2.txt,
+ * which doesn't list ZPS), gEntList is read from an instruction in LevelShutdown:
+ * "mov ecx, offset gEntList" (B9 imm32), 11 bytes into the signature. The stock ep2 signature
+ * matches twice in 2.4's server.dll; this one is extended to match only LevelShutdown. */
+"Games"
+{
+	"zps"
+	{
+		"Offsets"
+		{
+			"EntInfo"
+			{
+				"linux"		"4"
+				"windows"	"4"
+			}
+			/* Offset into LevelShutdown */
+			"gEntList"
+			{
+				"windows"	"11"
+			}
+		}
+		"Signatures"
+		{
+			"gEntList"
+			{
+				"library"	"server"
+				"linux"		"@gEntList"
+			}
+			"LevelShutdown"
+			{
+				"library"	"server"
+				"windows"	"\xE8\x2A\x2A\x2A\x2A\xE8\x2A\x2A\x2A\x2A\xB9\x2A\x2A\x2A\x2A\xE8\x2A\x2A\x2A\x2A\xE8\x2A\x2A\x2A\x2A\x6A\x00"
+			}
+		}
+	}
+}
