@@ -9,6 +9,9 @@ on:
     tags: [ 'v*' ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: windows-2022
@@ -75,16 +78,43 @@ jobs:
             --targets=x86 --enable-optimize
           ambuild
 
-      - name: Collect
+      - name: Collect binaries
         shell: bash
         run: |
-          mkdir -p out/addons/metamod out/addons/sourcemod
-          cp -r /c/w/metamod-source/build/package/addons/metamod/* out/addons/metamod/
-          cp -r /c/w/NavBot/build/package/addons/sourcemod/* out/addons/sourcemod/
-          find out -type f | head -100
+          mkdir -p bin/addons/metamod bin/addons/sourcemod
+          cp -r /c/w/metamod-source/build/package/addons/metamod/* bin/addons/metamod/
+          cp -r /c/w/NavBot/build/package/addons/sourcemod/* bin/addons/sourcemod/
+          find bin -name "*.pdb" -delete
+
+      - name: SourceMod 1.12 (for spcomp and includes)
+        shell: bash
+        run: |
+          f=$(curl -sf https://sm.alliedmods.net/smdrop/1.12/sourcemod-latest-windows)
+          curl -sfLo sm.zip "https://sm.alliedmods.net/smdrop/1.12/$f"
+          mkdir sm && cd sm && 7z x -y ../sm.zip > /dev/null
+
+      - name: Package
+        shell: bash
+        run: |
+          ver=${GITHUB_REF_NAME}
+          [[ "$GITHUB_REF" == refs/tags/* ]] || ver=dev-$(git -C repo rev-parse --short HEAD)
+          echo "VER=$ver" >> $GITHUB_ENV
+          repo/scripts/package.sh "$PWD/bin" "$PWD/sm" "$PWD/zps24-bots-windows-$ver"
+          7z a -tzip "zps24-bots-windows-$ver.zip" "zps24-bots-windows-$ver" > /dev/null
+          ls -la *.zip
 
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
-          name: zps24-bots-windows-binaries
-          path: out/
+          name: zps24-bots-windows-${{ env.VER }}
+          path: zps24-bots-windows-${{ env.VER }}/
+
+      - name: Release (tags)
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ZPS 2.4 Bots for Windows ${{ github.ref_name }}
+          files: zps24-bots-windows-${{ env.VER }}.zip
+          body: |
+            Unzip, double-click install.bat, then run C:\zps24-server\start-server.bat.
+            See the README inside the zip.
