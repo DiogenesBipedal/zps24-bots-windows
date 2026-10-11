@@ -27,6 +27,7 @@ cp "$REPO/gamedata/core.games-custom-zps24.txt"    "$G/core.games/custom/zps24.t
 cp "$REPO/gamedata/zps24_ai.games.txt"             "$G/zps24_ai.games.txt"
 mkdir -p "$A/sourcemod/configs/navbot/zps"
 cp "$CORE/configs/navbot/weapons.cfg" "$A/sourcemod/configs/navbot/zps/weapons.cfg"
+cp "$CORE/configs/zps24_maps.cfg" "$A/sourcemod/configs/"
 mkdir -p "$A/sourcemod/data/navbot/zps"
 cp "$REPO"/data/navbot/zps/*.smnav "$A/sourcemod/data/navbot/zps/"
 # Plugins (same sources as Linux)
