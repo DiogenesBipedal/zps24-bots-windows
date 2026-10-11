@@ -15,7 +15,7 @@ start)
 stop)
 	pkill -f '[s]rcds\.exe' ; sleep 2; WINEPREFIX=$WINEPREFIX wineserver -k 2>/dev/null; echo stopped ;;   # [s]: don't match this shell's own command line
 cmd)
-	shift; ZPS24_RCON_HOST=$IP ZPS24_RCON_PORT=$PORT python3 "$(dirname "$0")/../core/scripts/rcon.py" "$*" ;;
+	shift; ZPS24_RCON_HOST=$IP ZPS24_RCON_PORT=$PORT python3 "$(dirname "$0")/../core/scripts/rcon.py" "$@" ;;
 log)
 	tail -${2:-40} "$W/zps/console.log" ;;
 esac
