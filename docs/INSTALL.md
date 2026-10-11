@@ -41,7 +41,7 @@ Run install.bat again any time to update. Your configs are kept.
 
 ## Maps
 
-The rotation is cabin, church and cinema (every 2 rounds; edit `zps\mapcycle_bots.txt`). Nav
+The rotation has all 29 maps with nav meshes (every 2 rounds; edit `zps\mapcycle_bots.txt`). Nav
 meshes for 29 maps are included, so bots work on almost every stock map (not `zpo_aquatica`).
 
 For any other map, load it, then in the server console:
