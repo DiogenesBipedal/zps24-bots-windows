@@ -39,16 +39,20 @@ Run install.bat again any time to update. Your configs are kept.
 - The bots learn from you as you play: your hold-out spots, routes, furniture placements,
   break-ins as a zombie, and how close you let zombies get. See the main project's docs.
 
-## Other maps
+## Maps
 
-Bots need a nav mesh for each map. On a new map, in the server console:
+The rotation is cabin, church and cinema (every 2 rounds; edit `zps\mapcycle_bots.txt`). Nav
+meshes for 29 maps are included, so bots work on almost every stock map (not `zpo_aquatica`).
+
+For any other map, load it, then in the server console:
 
 ```
 sv_cheats 1
 sm_nav_generate
 ```
 
-Wait until it says the mesh was saved (a minute or two), then `sv_cheats 0` and change map.
+Wait until it says the mesh was saved (usually under a minute), then `sv_cheats 0` and change
+map. It works with nobody connected.
 
 ## Settings and docs
 
