@@ -104,7 +104,7 @@ jobs:
           ls -la *.zip
 
       - name: Upload
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: zps24-bots-windows-${{ env.VER }}
           path: zps24-bots-windows-${{ env.VER }}/
