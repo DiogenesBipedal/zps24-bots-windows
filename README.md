@@ -28,5 +28,5 @@ of the main repo). This repo adds what Windows needs:
 Tested with the Windows 2.4 dedicated server under Wine 11 on Linux
 (`scripts/wine-server.sh`).
 
-**Status: v1.0.** Built by CI with MSVC and tested under Wine; not yet on a real Windows PC.
+**Status: v1.0.1.** Built by CI with MSVC and tested under Wine; not yet on a real Windows PC.
 If something fails there, please open an issue with the server console output.

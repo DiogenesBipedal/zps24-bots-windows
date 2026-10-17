@@ -79,7 +79,6 @@ foreach ($f in @('server.cfg', 'sourcemod\plugin.navbot_quota.cfg')) {
 	$dest = "$zps\cfg\$f"
 	if (-not (Test-Path $dest)) { New-Item -ItemType Directory -Force -Path (Split-Path $dest) | Out-Null; Copy-Item "$pkg\cfg\$f" $dest }
 }
-if (-not (Test-Path "$zps\mapcycle_bots.txt")) { Copy-Item "$pkg\mapcycle_bots.txt" "$zps\" }
 
 Step "4. Maps (cabin and church come with the ZPS 2.4 game)"
 $maps = @('zpo_cabin_outbreak_b8_com.bsp', 'zpo_church_siege_final_h.bsp')
@@ -101,6 +100,11 @@ foreach ($m in $maps) {
 	}
 	if ($found) { Copy-Item $found "$zps\maps\"; Write-Host "  copied $m" }
 	else { Write-Warning "  $m not found. Install ZPS 2.4 (Steam: Zombie Panic! Source > Properties > Betas > legacy2.4) and run this again, or copy the map into $zps\maps." }
+}
+
+# The rotation: only maps this server has (the lake maps are converted 3.x maps, not included).
+if (-not (Test-Path "$zps\mapcycle_bots.txt")) {
+	Get-Content "$pkg\mapcycle_bots.txt" | Where-Object { $_ -and (Test-Path "$zps\maps\$_.bsp") } | Set-Content "$zps\mapcycle_bots.txt"
 }
 
 Step "5. Admin, start script, firewall"
